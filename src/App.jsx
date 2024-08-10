@@ -26,7 +26,7 @@ function App() {
       );
 
       const data = await response.json();
-
+      console.log(data);
       //check if the API is invalid key
       if (data.error) {
         throw new Error(data.error);
