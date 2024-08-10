@@ -54,18 +54,21 @@ function App() {
       className="w-[clamp(30rem,90%,120rem)] mx-auto flex items-center justify-center
     min-h-screen flex-col gap-10 text-2xl"
     >
-      <h1 className="text-5xl font-bold tracking-[2px] text-gray-700 mb-6">
+      <h1 className="text-4xl lg:text-5xl font-bold tracking-[2px] text-gray-700 mb-4 lg:mb-6">
         Stock Price App
       </h1>
-      <div className="w-[50rem] shadow-[0_0_1rem_rgba(0,0,0,0.15)] p-10 rounded-md">
-        <form onSubmit={handleSubmit} className="flex items-center gap-6 ">
+      <div className="w-[clamp(30rem,100%,50rem)] shadow-[0_0_1rem_rgba(0,0,0,0.15)] p-10 rounded-md">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col md:flex-row gap-4 lg:gap-6 text-xl md:text-2xl"
+        >
           <input
             type="text"
             name="searchStockQuery"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
             placeholder="Search Stock..."
-            className="w-full border border-gray-400 px-6 py-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-400 px-6 py-2 rounded outline-none focus:ring-2 focus:ring-blue-500 "
           />
           <button
             type="submit"
@@ -76,11 +79,13 @@ function App() {
         </form>
         <div
           className="h-[20vh] flex items-center flex-col
-         justify-center font-medium text-gray-700"
+         justify-center font-medium text-gray-700 text-xl md:text-2xl "
         >
           {loading && <p>Loading...</p>}
           {!stockQuery && !loading && (
-            <p>Search Stock Symbol to view the Current Price</p>
+            <p className="text-gray-500 ">
+              Search Stock Symbol to view the Current Price
+            </p>
           )}
           {errorMessage && stockQuery && (
             <p className="text-red-500">Error: {errorMessage}</p>
