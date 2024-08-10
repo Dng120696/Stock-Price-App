@@ -6,6 +6,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [inputVal, setInputVal] = useState("");
   const [stockQuery, setStockQuery] = useState("");
+  const [symbolDescription, setSymbolDescription] = useState([]);
   const apiKey = import.meta.env.VITE_FINNHUB_API_KEY;
 
   async function handleSubmit(e) {
@@ -21,26 +22,32 @@ function App() {
     setErrorMessage(null); // Clear previous error message
 
     try {
-      const response = await fetch(
-        `https://finnhub.io/api/v1/quote?symbol=${inputVal}&token=${apiKey}`
-      );
+      const [responseQoute, responseLookup] = await Promise.all([
+        fetch(
+          `https://finnhub.io/api/v1/quote?symbol=${inputVal}&token=${apiKey}`
+        ),
+        fetch(
+          `https://finnhub.io/api/v1//search?q=${inputVal}&token=${apiKey}`
+        ),
+      ]); // getting the stock price and the company name
 
-      const data = await response.json();
-      console.log(data);
+      const dataQoute = await responseQoute.json();
+      const dataLookup = await responseLookup.json();
+
       //check if the API is invalid key
-      if (data.error) {
-        throw new Error(data.error);
+      if (dataQoute.error || dataLookup.error) {
+        throw new Error(dataQoute.error);
       }
 
       // Check if current price data is invalid
-      if (data.c === 0) {
+      if (dataQoute.c === 0 || dataLookup.count === 0) {
         throw new Error("Invalid symbol or no data found"); // create a custom error if the symbol is invalid
       } else {
-        setStockData(data); // save the data to a state variable
+        setStockData(dataQoute); // save the data to a state variable
+        setSymbolDescription(dataLookup.result[0]); // save the data description for the symbol
         setErrorMessage(null); // clear error message
       }
     } catch (error) {
-      console.error("Fetch error:", error.message);
       setStockData(null);
       setErrorMessage(error.message);
     } finally {
@@ -95,6 +102,12 @@ function App() {
               className="
             flex items-center flex-col gap-2"
             >
+              <p>
+                <span className=" text-gray-500 font-normal">
+                  Company Name:
+                </span>{" "}
+                {symbolDescription.description}
+              </p>
               <p>
                 <span className=" text-gray-500 font-normal">
                   Stock Symbol:
